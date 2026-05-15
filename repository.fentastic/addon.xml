@@ -4,9 +4,11 @@
     <import addon="xbmc.addon" version="12.0.0" />
   </requires>
   <extension point="xbmc.addon.repository" name="FENtastic Repository">
-    <info compressed="false">https://stayxnegative.github.io/skin.fentastic/addons.xml</info>
-    <checksum>https://stayxnegative.github.io/skin.fentastic/addons.xml.md5</checksum>
-    <datadir zip="true">https://stayxnegative.github.io/skin.fentastic/</datadir>
+    <dir>
+      <info compressed="false">https://stayxnegative.github.io/skin.fentastic/addons.xml</info>
+      <checksum algo="md5">https://stayxnegative.github.io/skin.fentastic/addons.xml.md5</checksum>
+      <datadir zip="true">https://stayxnegative.github.io/skin.fentastic/</datadir>
+    </dir>
     <assets>
       <icon>icon.png</icon>
     </assets>
