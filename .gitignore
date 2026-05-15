@@ -1,4 +1,6 @@
 .DS_Store
+_repo/
+__pycache__/
 xml/script-fentastic-main_menu_movies.xml
 xml/script-fentastic-main_menu_tvshows.xml
 xml/script-fentastic-main_menu_custom1.xml
