@@ -90,6 +90,18 @@ def sha256_of(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
+def write_index_html(directory: Path, title: str, entries: list[str]):
+    """Write an Apache-style directory listing that Kodi's HTTP VFS can parse."""
+    links = "\n".join(
+        f'<li><a href="{entry}">{entry}</a></li>' for entry in entries
+    )
+    html = (
+        f"<!DOCTYPE html><html><head><title>{title}</title></head><body>\n"
+        f"<h1>{title}</h1><ul>\n{links}\n</ul></body></html>\n"
+    )
+    (directory / "index.html").write_text(html, encoding="utf-8")
+
+
 def main():
     OUTPUT.mkdir(exist_ok=True)
     (OUTPUT / ".nojekyll").touch()
@@ -106,8 +118,12 @@ def main():
         dest_dir.mkdir(exist_ok=True)
 
         print(f"Processing {addon_id}...")
-        zip_addon(addon_id, addon_path, dest_dir)
+        zip_file = zip_addon(addon_id, addon_path, dest_dir)
         copy_addon_assets(addon_id, addon_path, dest_dir)
+
+        # Per-addon index.html listing all files in its directory
+        sub_entries = sorted(f.name for f in dest_dir.iterdir())
+        write_index_html(dest_dir, addon_id, sub_entries)
 
         addon_pairs.append((addon_id, addon_path))
 
@@ -120,6 +136,14 @@ def main():
     # Generate hashes
     (OUTPUT / "addons.xml.md5").write_text(md5_of(addons_xml), encoding="utf-8")
     (OUTPUT / "addons.xml.sha256").write_text(sha256_of(addons_xml), encoding="utf-8")
+
+    # Root index.html — lists addon subdirs and top-level files for Kodi browsing
+    root_entries = sorted(
+        [f"{addon_id}/" for addon_id, _ in addon_pairs]
+        + ["addons.xml", "addons.xml.md5", "addons.xml.sha256"]
+    )
+    write_index_html(OUTPUT, "FENtastic Kodi Repository", root_entries)
+    print("  index.html (root + per-addon)")
 
     print(f"\nDone! Repository written to: {OUTPUT}")
     print("  addons.xml")
