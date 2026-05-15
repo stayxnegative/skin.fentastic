@@ -9,13 +9,13 @@
       <checksum algo="md5">https://stayxnegative.github.io/skin.fentastic/addons.xml.md5</checksum>
       <datadir zip="true">https://stayxnegative.github.io/skin.fentastic/</datadir>
     </dir>
-    <assets>
-      <icon>icon.png</icon>
-    </assets>
   </extension>
   <extension point="xbmc.addon.metadata">
     <summary lang="en_GB">FENtastic Skin Repository</summary>
     <description lang="en_GB">Repository hosting the FENtastic skin for Kodi.</description>
     <platform>all</platform>
+    <assets>
+      <icon>icon.png</icon>
+    </assets>
   </extension>
 </addon>
