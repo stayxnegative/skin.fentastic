@@ -46,16 +46,21 @@ def get_addon_version(addon_xml_path: Path) -> str:
     return tree.getroot().get("version", "0.0.0")
 
 
-def zip_addon(addon_id: str, addon_path: Path, dest_dir: Path) -> Path:
+def zip_addon(addon_id: str, addon_path: Path, dest_dir: Path, excluded: set | None = None) -> Path:
     version = get_addon_version(addon_path / "addon.xml")
     zip_name = f"{addon_id}-{version}.zip"
     zip_path = dest_dir / zip_name
 
     with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
         for file in sorted(addon_path.rglob("*")):
-            if any(part in EXCLUDED for part in file.parts):
+            if not file.is_file():
                 continue
-            arcname = Path(addon_id) / file.relative_to(addon_path)
+            rel = file.relative_to(addon_path)
+            # Exclude based on the top-level name only (relative to addon_path)
+            # so that the exclusion list doesn't accidentally match parent path parts.
+            if excluded and rel.parts[0] in excluded:
+                continue
+            arcname = Path(addon_id) / rel
             zf.write(file, arcname)
 
     print(f"  Created {zip_name}")
@@ -120,7 +125,9 @@ def main():
         dest_dir.mkdir(exist_ok=True)
 
         print(f"Processing {addon_id}...")
-        zip_file = zip_addon(addon_id, addon_path, dest_dir)
+        # Only the root skin addon needs the exclusion list (to strip repo/tool dirs).
+        excluded = EXCLUDED if subfolder is None else None
+        zip_file = zip_addon(addon_id, addon_path, dest_dir, excluded)
         copy_addon_assets(addon_id, addon_path, dest_dir)
 
         # Per-addon index.html listing all files in its directory
