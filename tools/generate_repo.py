@@ -20,7 +20,8 @@ OUTPUT = ROOT / "_repo"
 # Addons to include in the repository.
 # Value is either a subfolder name (str) or None to use the repo root itself.
 ADDON_DIRS: dict[str, str | None] = {
-    "skin.fentastic": None,          # addon.xml lives at the repo root
+    "skin.fentastic": None,                        # addon.xml lives at the repo root
+    "script.fentastic.helper": "script.fentastic.helper",
     "repository.fentastic": "repository.fentastic",
 }
 
@@ -36,6 +37,7 @@ EXCLUDED = {
     "changelog.txt",
     "LICENSE.txt",
     "repository.fentastic",
+    "script.fentastic.helper",
 }
 
 
